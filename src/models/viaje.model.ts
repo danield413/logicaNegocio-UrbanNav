@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasOne} from '@loopback/repository';
+import {Alerta} from './alerta.model';
 
 @model()
 export class Viaje extends Entity {
@@ -25,6 +26,9 @@ export class Viaje extends Entity {
     type: 'string',
   })
   fechahoraFin?: string;
+
+  @hasOne(() => Alerta)
+  alerta: Alerta;
 
   constructor(data?: Partial<Viaje>) {
     super(data);
