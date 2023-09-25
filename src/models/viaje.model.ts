@@ -1,5 +1,6 @@
 import {Entity, model, property, hasOne} from '@loopback/repository';
 import {Alerta} from './alerta.model';
+import {Factura} from './factura.model';
 
 @model()
 export class Viaje extends Entity {
@@ -29,6 +30,9 @@ export class Viaje extends Entity {
 
   @hasOne(() => Alerta)
   alerta: Alerta;
+
+  @hasOne(() => Factura)
+  factura: Factura;
 
   constructor(data?: Partial<Viaje>) {
     super(data);
