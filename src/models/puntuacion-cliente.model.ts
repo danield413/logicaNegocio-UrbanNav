@@ -19,9 +19,8 @@ export class PuntuacionCliente extends Entity {
   }
 }
 
-export interface PuntuacionClienteRelations {
+export interface PuntuacionRelations {
   // describe navigational properties here
 }
 
-export type PuntuacionWithRelations = PuntuacionCliente &
-  PuntuacionClienteRelations;
+export type PuntuacionWithRelations = PuntuacionCliente & PuntuacionRelations;
