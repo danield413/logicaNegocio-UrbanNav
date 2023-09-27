@@ -1,22 +1,16 @@
-import {inject, Getter} from '@loopback/core';
-import {DefaultCrudRepository, repository, HasManyRepositoryFactory} from '@loopback/repository';
+import {inject} from '@loopback/core';
+import {DefaultCrudRepository} from '@loopback/repository';
 import {MysqlDataSource} from '../datasources';
-import {Cliente, ClienteRelations, Preferencia} from '../models';
-import {PreferenciaRepository} from './preferencia.repository';
+import {Cliente, ClienteRelations} from '../models';
 
 export class ClienteRepository extends DefaultCrudRepository<
   Cliente,
   typeof Cliente.prototype.idCliente,
   ClienteRelations
 > {
-
-  public readonly preferencias: HasManyRepositoryFactory<Preferencia, typeof Cliente.prototype.idCliente>;
-
   constructor(
-    @inject('datasources.mysql') dataSource: MysqlDataSource, @repository.getter('PreferenciaRepository') protected preferenciaRepositoryGetter: Getter<PreferenciaRepository>,
+    @inject('datasources.mysql') dataSource: MysqlDataSource,
   ) {
     super(Cliente, dataSource);
-    this.preferencias = this.createHasManyRepositoryFactoryFor('preferencias', preferenciaRepositoryGetter,);
-    this.registerInclusionResolver('preferencias', this.preferencias.inclusionResolver);
   }
 }

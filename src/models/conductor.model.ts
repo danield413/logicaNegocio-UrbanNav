@@ -1,5 +1,4 @@
-import {Entity, model, property, hasOne} from '@loopback/repository';
-import {Vehiculo} from './vehiculo.model';
+import {Entity, model, property} from '@loopback/repository';
 
 @model()
 export class Conductor extends Entity {
@@ -72,8 +71,6 @@ export class Conductor extends Entity {
   })
   idMongoDB?: string;
 
-  @hasOne(() => Vehiculo)
-  vehiculo: Vehiculo;
 
   constructor(data?: Partial<Conductor>) {
     super(data);

@@ -1,5 +1,4 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
-import {Preferencia} from './preferencia.model';
+import {Entity, model, property} from '@loopback/repository';
 
 @model()
 export class Cliente extends Entity {
@@ -71,8 +70,6 @@ export class Cliente extends Entity {
   })
   idMongoDB?: string;
 
-  @hasMany(() => Preferencia)
-  preferencias: Preferencia[];
 
   constructor(data?: Partial<Cliente>) {
     super(data);

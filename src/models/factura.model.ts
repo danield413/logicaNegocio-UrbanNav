@@ -1,27 +1,28 @@
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
-export class Preferencia extends Entity {
+export class Factura extends Entity {
   @property({
     type: 'number',
     id: true,
     generated: true,
   })
-  idPreferencia?: number;
+  idFactura?: number;
 
   @property({
     type: 'string',
+    required: true,
   })
-  descripcion?: string;
+  fechahora: string;
 
 
-  constructor(data?: Partial<Preferencia>) {
+  constructor(data?: Partial<Factura>) {
     super(data);
   }
 }
 
-export interface PreferenciaRelations {
+export interface FacturaRelations {
   // describe navigational properties here
 }
 
-export type PreferenciaWithRelations = Preferencia & PreferenciaRelations;
+export type FacturaWithRelations = Factura & FacturaRelations;
