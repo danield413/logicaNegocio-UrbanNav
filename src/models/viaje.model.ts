@@ -3,7 +3,6 @@ import {Alerta} from './alerta.model';
 import {Cliente} from './cliente.model';
 import {Conductor} from './conductor.model';
 import {Factura} from './factura.model';
-import {Recorrido} from './recorrido.model';
 
 @model({
   settings: {
@@ -19,12 +18,6 @@ import {Recorrido} from './recorrido.model';
         entity: 'Cliente',
         entityKey: 'idCliente',
         foreignKey: 'clienteId',
-      },
-      fkRecorridoId: {
-        name: 'fk_viaje_recorridoid',
-        entity: 'Recorrido',
-        entityKey: 'idRecorrido',
-        foreignKey: 'recorridoId',
       },
     },
   },
@@ -65,9 +58,6 @@ export class Viaje extends Entity {
 
   @hasOne(() => Factura)
   factura: Factura;
-
-  @belongsTo(() => Recorrido)
-  recorridoId: number;
 
   constructor(data?: Partial<Viaje>) {
     super(data);
