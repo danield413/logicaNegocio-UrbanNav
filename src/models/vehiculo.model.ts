@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasOne} from '@loopback/repository';
+import {Conductor} from './conductor.model';
 
 @model()
 export class Vehiculo extends Entity {
@@ -39,6 +40,8 @@ export class Vehiculo extends Entity {
   })
   tecno: string;
 
+  @hasOne(() => Conductor)
+  conductor: Conductor;
 
   constructor(data?: Partial<Vehiculo>) {
     super(data);
