@@ -5,10 +5,10 @@ const config = {
   name: 'mysql',
   connector: 'mysql',
   url: '',
-  host: 'localhost',
+  host: 'servidorbdprogramacion.ccblj0esswds.us-east-2.rds.amazonaws.com',
   port: 3306,
-  user: 'root',
-  password: '',
+  user: 'admin',
+  password: 'ASre78yht2O',
   database: 'urbannav',
 };
 
@@ -19,8 +19,7 @@ const config = {
 @lifeCycleObserver('datasource')
 export class MysqlDataSource
   extends juggler.DataSource
-  implements LifeCycleObserver
-{
+  implements LifeCycleObserver {
   static dataSourceName = 'mysql';
   static readonly defaultConfig = config;
 
