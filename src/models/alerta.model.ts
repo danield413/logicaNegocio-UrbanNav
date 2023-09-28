@@ -1,6 +1,18 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {Viaje} from './viaje.model';
 
-@model()
+@model({
+  settings: {
+    foreignKeys: {
+      fk_alerta_viajeid: {
+        name: 'fk_alerta_viajeid',
+        entity: 'Viaje',
+        entityKey: 'idViaje',
+        foreignKey: 'viajeId',
+      },
+    },
+  },
+})
 export class Alerta extends Entity {
   @property({
     type: 'number',
@@ -15,6 +27,8 @@ export class Alerta extends Entity {
   })
   fechahora: string;
 
+  @belongsTo(() => Viaje)
+  viajeId: number;
 
   constructor(data?: Partial<Alerta>) {
     super(data);

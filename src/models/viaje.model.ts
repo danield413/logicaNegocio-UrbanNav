@@ -1,6 +1,11 @@
-import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {Entity, belongsTo, hasOne, model, property} from '@loopback/repository';
+import {Alerta} from './alerta.model';
 import {Cliente} from './cliente.model';
 import {Conductor} from './conductor.model';
+import {Factura} from './factura.model';
+import {Recorrido} from './recorrido.model';
+import {ResenaViajeCliente} from './resena-viaje-cliente.model';
+import {ResenaViajeConductor} from './resena-viaje-conductor.model';
 
 @model({
   settings: {
@@ -16,6 +21,12 @@ import {Conductor} from './conductor.model';
         entity: 'Cliente',
         entityKey: 'idCliente',
         foreignKey: 'clienteId',
+      },
+      fkRecorridoId: {
+        name: 'fk_viaje_recorridoid',
+        entity: 'Recorrido',
+        entityKey: 'idRecorrido',
+        foreignKey: 'recorridoId',
       },
     },
   },
@@ -50,6 +61,21 @@ export class Viaje extends Entity {
 
   @belongsTo(() => Cliente)
   clienteId: number;
+
+  @hasOne(() => Alerta)
+  alerta: Alerta;
+
+  @hasOne(() => Factura)
+  factura: Factura;
+
+  @belongsTo(() => Recorrido)
+  recorridoId: number;
+
+  @hasOne(() => ResenaViajeCliente)
+  resenaViajeCliente: ResenaViajeCliente;
+
+  @hasOne(() => ResenaViajeConductor)
+  resenaViajeConductor: ResenaViajeConductor;
 
   constructor(data?: Partial<Viaje>) {
     super(data);
