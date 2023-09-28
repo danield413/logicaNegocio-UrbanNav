@@ -1,22 +1,16 @@
-import {inject, Getter} from '@loopback/core';
-import {DefaultCrudRepository, repository, BelongsToAccessor} from '@loopback/repository';
+import {inject} from '@loopback/core';
+import {DefaultCrudRepository} from '@loopback/repository';
 import {MysqlDataSource} from '../datasources';
-import {Factura, FacturaRelations, Viaje} from '../models';
-import {ViajeRepository} from './viaje.repository';
+import {Factura, FacturaRelations} from '../models';
 
 export class FacturaRepository extends DefaultCrudRepository<
   Factura,
   typeof Factura.prototype.idFactura,
   FacturaRelations
 > {
-
-  public readonly viaje: BelongsToAccessor<Viaje, typeof Factura.prototype.idFactura>;
-
   constructor(
-    @inject('datasources.mysql') dataSource: MysqlDataSource, @repository.getter('ViajeRepository') protected viajeRepositoryGetter: Getter<ViajeRepository>,
+    @inject('datasources.mysql') dataSource: MysqlDataSource,
   ) {
     super(Factura, dataSource);
-    this.viaje = this.createBelongsToAccessorFor('viaje', viajeRepositoryGetter,);
-    this.registerInclusionResolver('viaje', this.viaje.inclusionResolver);
   }
 }
