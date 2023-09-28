@@ -1,4 +1,7 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Preferencia} from './preferencia.model';
+import {Viaje} from './viaje.model';
+import {JustificacionCliente} from './justificacion-cliente.model';
 
 @model()
 export class Cliente extends Entity {
@@ -70,6 +73,14 @@ export class Cliente extends Entity {
   })
   idMongoDB?: string;
 
+  @hasMany(() => Preferencia)
+  preferencias: Preferencia[];
+
+  @hasMany(() => Viaje)
+  viajes: Viaje[];
+
+  @hasMany(() => JustificacionCliente)
+  justificacionClientes: JustificacionCliente[];
 
   constructor(data?: Partial<Cliente>) {
     super(data);

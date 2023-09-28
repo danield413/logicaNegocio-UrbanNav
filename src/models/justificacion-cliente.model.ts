@@ -1,6 +1,18 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {Cliente} from './cliente.model';
 
-@model()
+@model({
+  settings: {
+    foreignKeys: {
+      fkClienteId: {
+        name: 'fk_cliente_id',
+        entity: 'Cliente',
+        entityKey: 'idCliente',
+        foreignKey: 'clienteId',
+      },
+    },
+  },
+})
 export class JustificacionCliente extends Entity {
   @property({
     type: 'number',
@@ -21,6 +33,8 @@ export class JustificacionCliente extends Entity {
   })
   fechahora: string;
 
+  @belongsTo(() => Cliente)
+  clienteId: number;
 
   constructor(data?: Partial<JustificacionCliente>) {
     super(data);
@@ -31,4 +45,5 @@ export interface JustificacionClienteRelations {
   // describe navigational properties here
 }
 
-export type JustificacionClienteWithRelations = JustificacionCliente & JustificacionClienteRelations;
+export type JustificacionClienteWithRelations = JustificacionCliente &
+  JustificacionClienteRelations;
