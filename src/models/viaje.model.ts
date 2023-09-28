@@ -6,17 +6,17 @@ import {Conductor} from './conductor.model';
   settings: {
     foreignKeys: {
       fkConductorId: {
-        name: 'fk_conductor_id',
+        name: 'fk_viaje_conductorid',
         entity: 'Conductor',
         entityKey: 'idConductor',
         foreignKey: 'conductorId',
       },
-    },
-    fkClienteId: {
-      name: 'fk_cliente_id',
-      entity: 'Cliente',
-      entityKey: 'idCliente',
-      foreignKey: 'clienteId',
+      fkClienteId: {
+        name: 'fk_viaje_clienteid',
+        entity: 'Cliente',
+        entityKey: 'idCliente',
+        foreignKey: 'clienteId',
+      },
     },
   },
 })

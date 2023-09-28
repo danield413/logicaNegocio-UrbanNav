@@ -5,7 +5,7 @@ import {Cliente} from './cliente.model';
   settings: {
     foreignKeys: {
       fkClienteId: {
-        name: 'fk_cliente_id',
+        name: 'fk_cliente_preferencia_id',
         entity: 'Cliente',
         entityKey: 'idCliente',
         foreignKey: 'clienteId',
