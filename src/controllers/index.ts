@@ -21,3 +21,5 @@ export * from './viaje-resena-viaje-cliente.controller';
 export * from './resena-viaje-cliente-viaje.controller';
 export * from './viaje-resena-viaje-conductor.controller';
 export * from './resena-viaje-conductor-viaje.controller';
+export * from './pago-factura.controller';
+export * from './factura-pago.controller';

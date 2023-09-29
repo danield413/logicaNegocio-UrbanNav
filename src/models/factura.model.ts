@@ -1,4 +1,5 @@
 import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {Pago} from './pago.model';
 import {Viaje} from './viaje.model';
 
 @model({
@@ -9,6 +10,12 @@ import {Viaje} from './viaje.model';
         entity: 'Viaje',
         entityKey: 'idViaje',
         foreignKey: 'viajeId',
+      },
+      fk_factura_pagoid: {
+        name: 'fk_factura_pagoid',
+        entity: 'Pago',
+        entityKey: 'idPago',
+        foreignKey: 'pagoId',
       },
     },
   },
@@ -29,6 +36,9 @@ export class Factura extends Entity {
 
   @belongsTo(() => Viaje)
   viajeId: number;
+
+  @belongsTo(() => Pago)
+  pagoId: number;
 
   constructor(data?: Partial<Factura>) {
     super(data);
