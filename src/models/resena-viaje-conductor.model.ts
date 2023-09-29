@@ -1,4 +1,5 @@
-import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {Entity, belongsTo, hasOne, model, property} from '@loopback/repository';
+import {PuntuacionConductor} from './puntuacion-conductor.model';
 import {Viaje} from './viaje.model';
 
 @model({
@@ -28,6 +29,9 @@ export class ResenaViajeConductor extends Entity {
 
   @belongsTo(() => Viaje)
   viajeId: number;
+
+  @hasOne(() => PuntuacionConductor)
+  puntuacionConductor: PuntuacionConductor;
 
   constructor(data?: Partial<ResenaViajeConductor>) {
     super(data);

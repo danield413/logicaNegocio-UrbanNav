@@ -1,7 +1,19 @@
-import {Entity, model, property, hasOne} from '@loopback/repository';
+import {Entity, belongsTo, hasOne, model, property} from '@loopback/repository';
 import {Factura} from './factura.model';
+import {MetodoPago} from './metodo-pago.model';
 
-@model()
+@model({
+  settings: {
+    foreignKeys: {
+      fk_pago_metodo_pago: {
+        name: 'fk_pago_metodo_pago',
+        entity: 'MetodoPago',
+        entityKey: 'idMetodoPago',
+        foreignKey: 'metodoPagoId',
+      },
+    },
+  },
+})
 export class Pago extends Entity {
   @property({
     type: 'number',
@@ -18,6 +30,9 @@ export class Pago extends Entity {
 
   @hasOne(() => Factura)
   factura: Factura;
+
+  @belongsTo(() => MetodoPago)
+  metodoPagoId: number;
 
   constructor(data?: Partial<Pago>) {
     super(data);

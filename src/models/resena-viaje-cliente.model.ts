@@ -1,5 +1,6 @@
-import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {Entity, belongsTo, model, property, hasOne} from '@loopback/repository';
 import {Viaje} from './viaje.model';
+import {PuntuacionCliente} from './puntuacion-cliente.model';
 
 @model({
   settings: {
@@ -28,6 +29,9 @@ export class ResenaViajeCliente extends Entity {
 
   @belongsTo(() => Viaje)
   viajeId: number;
+
+  @hasOne(() => PuntuacionCliente)
+  puntuacionCliente: PuntuacionCliente;
 
   constructor(data?: Partial<ResenaViajeCliente>) {
     super(data);

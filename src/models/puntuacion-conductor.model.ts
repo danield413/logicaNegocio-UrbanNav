@@ -1,6 +1,18 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {ResenaViajeConductor} from './resena-viaje-conductor.model';
 
-@model()
+@model({
+  settings: {
+    foreignKeys: {
+      fk_resena_conductorid: {
+        name: 'fk_resena_conductorid',
+        entity: 'ResenaViajeConductor',
+        entityKey: 'idResena',
+        foreignKey: 'resenaViajeConductorId',
+      },
+    },
+  },
+})
 export class PuntuacionConductor extends Entity {
   @property({
     type: 'number',
@@ -14,6 +26,8 @@ export class PuntuacionConductor extends Entity {
   })
   puntuacion?: number;
 
+  @belongsTo(() => ResenaViajeConductor)
+  resenaViajeConductorId: number;
 
   constructor(data?: Partial<PuntuacionConductor>) {
     super(data);
