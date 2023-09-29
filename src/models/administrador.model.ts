@@ -1,4 +1,6 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {JustificacionCliente} from './justificacion-cliente.model';
+import {JustificacionConductor} from './justificacion-conductor.model';
 
 @model()
 export class Administrador extends Entity {
@@ -36,6 +38,11 @@ export class Administrador extends Entity {
   })
   idMongoDB?: string;
 
+  @hasMany(() => JustificacionCliente)
+  justificacionClientes: JustificacionCliente[];
+
+  @hasMany(() => JustificacionConductor)
+  justificacionConductors: JustificacionConductor[];
 
   constructor(data?: Partial<Administrador>) {
     super(data);

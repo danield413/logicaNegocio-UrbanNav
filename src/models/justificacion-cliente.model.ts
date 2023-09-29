@@ -1,4 +1,5 @@
 import {Entity, belongsTo, model, property} from '@loopback/repository';
+import {Administrador} from './administrador.model';
 import {Cliente} from './cliente.model';
 
 @model({
@@ -9,6 +10,12 @@ import {Cliente} from './cliente.model';
         entity: 'Cliente',
         entityKey: 'idCliente',
         foreignKey: 'clienteId',
+      },
+      fkAdministradorId: {
+        name: 'fk_administrador_justificacionCliente_id',
+        entity: 'Administrador',
+        entityKey: 'idAdministrador',
+        foreignKey: 'administradorId',
       },
     },
   },
@@ -35,6 +42,9 @@ export class JustificacionCliente extends Entity {
 
   @belongsTo(() => Cliente)
   clienteId: number;
+
+  @belongsTo(() => Administrador)
+  administradorId: number;
 
   constructor(data?: Partial<JustificacionCliente>) {
     super(data);
