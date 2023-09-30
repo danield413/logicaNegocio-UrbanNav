@@ -35,3 +35,5 @@ export * from './administrador-justificacion-conductor.controller';
 export * from './justificacion-conductor-administrador.controller';
 export * from './ciudad-barrio.controller';
 export * from './barrio-ciudad.controller';
+export * from './recorrido-barrio.controller';
+export * from './barrio-recorrido.controller';
