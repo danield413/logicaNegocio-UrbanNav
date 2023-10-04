@@ -56,3 +56,5 @@ export * from './resena-viaje-cliente.controller';
 export * from './resena-viaje-conductor.controller';
 export * from './vehiculo.controller';
 export * from './viaje.controller';
+export * from './barrio-conductor.controller';
+export * from './conductor-barrio.controller';

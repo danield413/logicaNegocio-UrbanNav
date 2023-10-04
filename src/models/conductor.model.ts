@@ -1,7 +1,8 @@
-import {Entity, belongsTo, model, property, hasMany} from '@loopback/repository';
+import {Entity, belongsTo, hasMany, model, property} from '@loopback/repository';
+import {Barrio} from './barrio.model';
+import {JustificacionConductor} from './justificacion-conductor.model';
 import {Vehiculo} from './vehiculo.model';
 import {Viaje} from './viaje.model';
-import {JustificacionConductor} from './justificacion-conductor.model';
 
 @model({
   settings: {
@@ -11,6 +12,12 @@ import {JustificacionConductor} from './justificacion-conductor.model';
         entity: 'Vehiculo',
         entityKey: 'idVehiculo',
         foreignKey: 'vehiculoId',
+      },
+      fkBarrioId: {
+        name: 'fk_barrio_id',
+        entity: 'Barrio',
+        entityKey: 'idBarrio',
+        foreignKey: 'barrioId',
       },
     },
   },
@@ -93,6 +100,9 @@ export class Conductor extends Entity {
 
   @hasMany(() => JustificacionConductor)
   justificacionConductors: JustificacionConductor[];
+
+  @belongsTo(() => Barrio)
+  barrioId: number;
 
   constructor(data?: Partial<Conductor>) {
     super(data);

@@ -7,13 +7,13 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
@@ -23,8 +23,8 @@ import {ViajeRepository} from '../repositories';
 export class ViajeController {
   constructor(
     @repository(ViajeRepository)
-    public viajeRepository : ViajeRepository,
-  ) {}
+    public viajeRepository: ViajeRepository,
+  ) { }
 
   @post('/viaje')
   @response(200, {
@@ -147,4 +147,24 @@ export class ViajeController {
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.viajeRepository.deleteById(id);
   }
+
+  // @post('viaje/solicitar')
+  // @response(200, {
+  //   description: 'Viaje model instance',
+  //   content: {'application/json': {schema: getModelSchemaRef(Recorrido)}},
+  // })
+  // async solicitar(
+  //   @requestBody({
+  //     content: {
+  //       'application/json': {
+  //         schema: getModelSchemaRef(Recorrido, {
+  //           title: 'NewSolicitud',
+  //           exclude: ['idRecorrido'],
+  //         }),
+  //       },
+  //     },
+  //   })
+  //   viaje: Omit<Viaje, 'idViaje'>, ): Promise<any> {
+  //   return this.viajeRepository.create(viaje);
+  // }
 }

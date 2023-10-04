@@ -1,6 +1,7 @@
-import {Entity, belongsTo, model, property, hasMany} from '@loopback/repository';
+import {Entity, belongsTo, model, property, hasMany, hasOne} from '@loopback/repository';
 import {Ciudad} from './ciudad.model';
 import {Recorrido} from './recorrido.model';
+import {Conductor} from './conductor.model';
 
 @model({
   settings: {
@@ -41,6 +42,9 @@ export class Barrio extends Entity {
 
   @hasMany(() => Recorrido, {keyTo: 'barrioDestinoId'})
   recorridosDestino: Recorrido[];
+
+  @hasOne(() => Conductor)
+  conductor: Conductor;
 
   constructor(data?: Partial<Barrio>) {
     super(data);

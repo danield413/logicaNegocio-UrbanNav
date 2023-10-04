@@ -18,3 +18,4 @@ export * from './viaje.model';
 export * from './factura.model';
 export * from './pago.model';
 export * from './metodo-pago.model';
+export * from './recorrido-solicitud.model';

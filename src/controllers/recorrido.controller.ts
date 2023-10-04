@@ -1,3 +1,4 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -7,24 +8,27 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
-import {Recorrido} from '../models';
+import {Recorrido, RecorridoSolicitud} from '../models';
 import {RecorridoRepository} from '../repositories';
+import {LogicaServicioService} from '../services';
 
 export class RecorridoController {
   constructor(
     @repository(RecorridoRepository)
-    public recorridoRepository : RecorridoRepository,
-  ) {}
+    public recorridoRepository: RecorridoRepository,
+    @service(LogicaServicioService)
+    public servicioLogica: LogicaServicioService,
+  ) { }
 
   @post('/recorrido')
   @response(200, {
@@ -146,5 +150,24 @@ export class RecorridoController {
   })
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.recorridoRepository.deleteById(id);
+  }
+
+  //solicitar viaje
+  @post('/recorrido/solicitar')
+  @response(200, {
+    description: 'Recorrido model instance',
+    content: {'application/json': {schema: getModelSchemaRef(RecorridoSolicitud)}},
+  })
+  async solicitar(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(RecorridoSolicitud),
+        },
+      },
+    })
+    recorridoSolicitud: RecorridoSolicitud
+  ): Promise<any> {
+    return await this.servicioLogica.buscarConductorMasCercano(recorridoSolicitud);
   }
 }

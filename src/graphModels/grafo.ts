@@ -5,6 +5,10 @@ class Grafo<T> {
     this.nodos = new Map();
   }
 
+  existeNodo(nodo: T) {
+    return this.nodos.has(nodo);
+  }
+
   agregarNodo(nodo: T) {
     if (!this.nodos.has(nodo)) {
       this.nodos.set(nodo, new Map());
