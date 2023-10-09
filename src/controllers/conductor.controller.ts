@@ -129,6 +129,27 @@ export class ConductorController {
     await this.conductorRepository.updateById(id, conductor);
   }
 
+  @get('/conductor/mongo/{idMongo}')
+  @response(200, {
+    description: 'Conductor model instance',
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(Conductor, {includeRelations: true}),
+      },
+    },
+  })
+  async findByMongoID(
+    @param.path.string('idMongo') id: string,
+    @param.filter(Conductor, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Conductor>,
+  ): Promise<Conductor | undefined> {
+    //search the usuario with the idMongo
+    const conductor = await this.conductorRepository.findOne({
+      where: {idMongoDB: id},
+    });
+    if (conductor) return conductor;
+  }
+
   @put('/conductor/{id}')
   @response(204, {
     description: 'Conductor PUT success',

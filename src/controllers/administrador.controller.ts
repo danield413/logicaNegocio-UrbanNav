@@ -111,6 +111,27 @@ export class AdministradorController {
     return this.administradorRepository.findById(id, filter);
   }
 
+  @get('/administrador/mongo/{idMongo}')
+  @response(200, {
+    description: 'Administrador model instance',
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(Administrador, {includeRelations: true}),
+      },
+    },
+  })
+  async findByMongoID(
+    @param.path.string('idMongo') id: string,
+    @param.filter(Administrador, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Administrador>,
+  ): Promise<Administrador | undefined> {
+    //search the usuario with the idMongo
+    const administrador = await this.administradorRepository.findOne({
+      where: {idMongoDB: id},
+    });
+    if (administrador) return administrador;
+  }
+
   @patch('/administrador/{id}')
   @response(204, {
     description: 'Administrador PATCH success',
