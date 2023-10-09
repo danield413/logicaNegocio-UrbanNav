@@ -24,7 +24,7 @@ export class ClienteController {
   constructor(
     @repository(ClienteRepository)
     public clienteRepository: ClienteRepository,
-  ) { }
+  ) {}
 
   @post('/cliente')
   @response(200, {
@@ -52,9 +52,7 @@ export class ClienteController {
     description: 'Cliente model count',
     content: {'application/json': {schema: CountSchema}},
   })
-  async count(
-    @param.where(Cliente) where?: Where<Cliente>,
-  ): Promise<Count> {
+  async count(@param.where(Cliente) where?: Where<Cliente>): Promise<Count> {
     return this.clienteRepository.count(where);
   }
 
@@ -106,9 +104,31 @@ export class ClienteController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Cliente, {exclude: 'where'}) filter?: FilterExcludingWhere<Cliente>
+    @param.filter(Cliente, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Cliente>,
   ): Promise<Cliente> {
     return this.clienteRepository.findById(id, filter);
+  }
+
+  @get('/cliente/mongo/{idMongo}')
+  @response(200, {
+    description: 'Cliente model instance',
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(Cliente, {includeRelations: true}),
+      },
+    },
+  })
+  async findByMongoID(
+    @param.path.string('idMongo') id: string,
+    @param.filter(Cliente, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Cliente>,
+  ): Promise<Cliente | undefined> {
+    //search the usuario with the idMongo
+    const cliente = await this.clienteRepository.findOne({
+      where: {idMongoDB: id},
+    });
+    if (cliente) return cliente;
   }
 
   @patch('/cliente/{id}')
