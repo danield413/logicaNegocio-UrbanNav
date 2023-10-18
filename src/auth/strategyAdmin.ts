@@ -12,12 +12,12 @@ import {ConfiguracionSeguridad} from '../config/seguridad.config';
 const jwt = require('jsonwebtoken');
 
 export class adminAuthenticacionStrategy implements AuthenticationStrategy {
-  name: string = 'cliente';
+  name: string = 'admin';
 
   constructor(
     @inject(AuthenticationBindings.METADATA)
     public metadata: AuthenticationMetadata,
-  ) {}
+  ) { }
 
   async authenticate(request: Request): Promise<UserProfile | undefined> {
     let token = parseBearerToken(request);
