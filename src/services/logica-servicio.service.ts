@@ -1,9 +1,9 @@
 import { /* inject, */ BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
+import {ConfiguracionLogica} from '../config/logica.config';
 import Grafo from '../graphModels/grafo';
 import {Barrio, Conductor, Recorrido, RecorridoSolicitud} from '../models';
-import {BarrioRepository, ConductorRepository, RecorridoRepository} from '../repositories';
-import {ConfiguracionLogica} from '../config/logica.config';
+import {BarrioRepository, ConductorRepository, PuntuacionClienteRepository, PuntuacionConductorRepository, RecorridoRepository} from '../repositories';
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class LogicaServicioService {
@@ -14,6 +14,11 @@ export class LogicaServicioService {
     public repositorioRecorrido: RecorridoRepository,
     @repository(BarrioRepository)
     public repositorioBarrio: BarrioRepository,
+    @repository(PuntuacionConductorRepository)
+    public repositorioPuntuacionConductor: PuntuacionConductorRepository,
+    @repository(PuntuacionClienteRepository)
+    public repositorioPuntuacionCliente: PuntuacionClienteRepository,
+
   ) { }
 
   /*
@@ -117,10 +122,26 @@ export class LogicaServicioService {
 
   async calcularPrecioRecorrido(idRecorrido: number): Promise<any> {
     let recorrido: Recorrido = await this.repositorioRecorrido.findById(idRecorrido);
-      let precio = recorrido.DistanciaKM * ConfiguracionLogica.precioPorKM;
-      return {
-        precio,
-        recorrido
-      }
+    let precio = recorrido.DistanciaKM * ConfiguracionLogica.precioPorKM;
+    return {
+      precio,
+      recorrido
+    }
   }
+
+  async puntuacionResenasConductor(idResena: number): Promise<any> {
+    let puntuaciones = await this.repositorioPuntuacionConductor.find();
+    return puntuaciones.find((puntuacion) => puntuacion.resenaViajeConductorId == idResena)
+  }
+
+  async puntuacionResenasCliente(idResena: number): Promise<any> {
+    let puntuaciones = await this.repositorioPuntuacionCliente.find();
+    return puntuaciones.find((puntuacion) => puntuacion.resenaViajeClienteId == idResena)
+  }
+
 }
+
+
+
+
+

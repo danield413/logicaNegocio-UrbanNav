@@ -1,3 +1,4 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -7,24 +8,29 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
 import {ResenaViajeCliente} from '../models';
-import {ResenaViajeClienteRepository} from '../repositories';
+import {ResenaViajeClienteRepository, ViajeRepository} from '../repositories';
+import {LogicaServicioService} from '../services';
 
 export class ResenaViajeClienteController {
   constructor(
     @repository(ResenaViajeClienteRepository)
-    public resenaViajeClienteRepository : ResenaViajeClienteRepository,
-  ) {}
+    public resenaViajeClienteRepository: ResenaViajeClienteRepository,
+    @repository(ViajeRepository)
+    public viajeRepository: ViajeRepository,
+    @service(LogicaServicioService)
+    public LogicaServicio: LogicaServicioService,
+  ) { }
 
   @post('/resena-viaje-cliente')
   @response(200, {
@@ -74,6 +80,35 @@ export class ResenaViajeClienteController {
     @param.filter(ResenaViajeCliente) filter?: Filter<ResenaViajeCliente>,
   ): Promise<ResenaViajeCliente[]> {
     return this.resenaViajeClienteRepository.find(filter);
+  }
+
+  @get('/resenas-viaje-cliente/{idCliente}')
+  @response(200, {
+    description: 'Array of ResenaViajeCliente model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(ResenaViajeCliente, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async findByIdResenaACliente(
+    @param.path.number('idCliente') id: number,
+  ): Promise<any[]> {
+    let resenas: any = await this.resenaViajeClienteRepository.find();
+    let resenasCliente = resenas.map(async (resena: ResenaViajeCliente) => {
+      let viaje = await this.viajeRepository.findById(resena.viajeId);
+      if (viaje.clienteId === id) {
+        let puntuacion = await this.LogicaServicio.puntuacionResenasCliente(resena.idResena!);
+        return {
+          resena,
+          puntuacion
+        };
+      }
+    })
+    return Promise.all(resenasCliente);
   }
 
   @patch('/resena-viaje-cliente')

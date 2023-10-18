@@ -1,3 +1,4 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -7,24 +8,29 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
 import {ResenaViajeConductor} from '../models';
-import {ResenaViajeConductorRepository} from '../repositories';
+import {ResenaViajeConductorRepository, ViajeRepository} from '../repositories';
+import {LogicaServicioService} from '../services';
 
 export class ResenaViajeConductorController {
   constructor(
     @repository(ResenaViajeConductorRepository)
-    public resenaViajeConductorRepository : ResenaViajeConductorRepository,
-  ) {}
+    public resenaViajeConductorRepository: ResenaViajeConductorRepository,
+    @repository(ViajeRepository)
+    public viajeRepository: ViajeRepository,
+    @service(LogicaServicioService)
+    public LogicaServicio: LogicaServicioService,
+  ) { }
 
   @post('/resena-viaje-conductor')
   @response(200, {
@@ -109,6 +115,36 @@ export class ResenaViajeConductorController {
     @param.filter(ResenaViajeConductor, {exclude: 'where'}) filter?: FilterExcludingWhere<ResenaViajeConductor>
   ): Promise<ResenaViajeConductor> {
     return this.resenaViajeConductorRepository.findById(id, filter);
+  }
+
+  @get('/resenas-viaje-conductor/{idConductor}')
+  @response(200, {
+    description: 'Array of ResenaViajeConductor model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(ResenaViajeConductor, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async findByIdResenaAConductor(
+    @param.path.number('idConductor') id: number,
+  ): Promise<any[]> {
+    let resenas: any = await this.resenaViajeConductorRepository.find();
+    console.log(resenas);
+    let resenasConductor = resenas.map(async (resena: ResenaViajeConductor) => {
+      let viaje = await this.viajeRepository.findById(resena.viajeId);
+      if (viaje.conductorId === id) {
+        let puntuacion = await this.LogicaServicio.puntuacionResenasConductor(resena.idResena!);
+        return {
+          resena,
+          puntuacion
+        }
+      }
+    })
+    return Promise.all(resenasConductor);
   }
 
   @patch('/resena-viaje-conductor/{id}')
