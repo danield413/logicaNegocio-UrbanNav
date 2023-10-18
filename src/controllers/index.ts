@@ -58,3 +58,4 @@ export * from './vehiculo.controller';
 export * from './viaje.controller';
 export * from './barrio-conductor.controller';
 export * from './conductor-barrio.controller';
+export * from './administrador-de-archivos.controller';
