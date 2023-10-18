@@ -18,13 +18,45 @@ import {
   response,
 } from '@loopback/rest';
 import {Factura} from '../models';
-import {FacturaRepository} from '../repositories';
+import {FacturaRepository, PagoRepository, ViajeRepository} from '../repositories';
 
 export class FacturaController {
   constructor(
     @repository(FacturaRepository)
     public facturaRepository : FacturaRepository,
+    @repository(ViajeRepository)
+    public viajeRepository : ViajeRepository,
+    @repository(PagoRepository)
+    public pagoRepository : PagoRepository,
   ) {}
+
+  //TODO: HACER EL METODO PARA GENERAR LA FACTURA
+  @post('/generar-factura')
+  @response(200, {
+    description: 'Factura model instance',
+    content: {'application/json': {schema: getModelSchemaRef(Factura)}},
+  })
+  async generateFactura(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Factura, {
+            title: 'NewFactura',
+            exclude: ['idFactura'],
+          }),
+        },
+      },
+    })
+    factura: Omit<Factura, 'idFactura'>,
+  ): Promise<Factura> {
+    let facturaCreada = await this.facturaRepository.create(factura);
+    //TODO: LLAMAR A NOTIFICACIONES PARA ENVIAR LA FACTURA AL USUARIO
+    let viaje = await this.viajeRepository.findById(factura.viajeId);
+    let pago = await this.pagoRepository.findById(factura.pagoId);
+    console.log(viaje, pago)
+    return facturaCreada;
+  }
+
 
   @post('/factura')
   @response(200, {

@@ -21,6 +21,7 @@ import {
 import {Recorrido, RecorridoSolicitud} from '../models';
 import {RecorridoRepository} from '../repositories';
 import {LogicaServicioService} from '../services';
+import {ConfiguracionLogica} from '../config/logica.config';
 
 export class RecorridoController {
   constructor(
@@ -113,6 +114,22 @@ export class RecorridoController {
     @param.filter(Recorrido, {exclude: 'where'}) filter?: FilterExcludingWhere<Recorrido>
   ): Promise<Recorrido> {
     return this.recorridoRepository.findById(id, filter);
+  }
+
+  @get('/precio-recorrido/{id}')
+  @response(200, {
+    description: 'Recorrido model instance',
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(Recorrido, {includeRelations: true}),
+      },
+    },
+  })
+  async buscarPrecioRecorrido(
+    @param.path.number('id') id: number,
+    @param.filter(Recorrido, {exclude: 'where'}) filter?: FilterExcludingWhere<Recorrido>
+  ): Promise<any> {
+     return await this.servicioLogica.calcularPrecioRecorrido(id);
   }
 
   @patch('/recorrido/{id}')

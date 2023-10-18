@@ -19,11 +19,15 @@ import {
 } from '@loopback/rest';
 import {Pago} from '../models';
 import {PagoRepository} from '../repositories';
+import { LogicaServicioService } from '../services/logica-servicio.service';
+import {service} from '@loopback/core';
 
 export class PagoController {
   constructor(
     @repository(PagoRepository)
     public pagoRepository : PagoRepository,
+    @service(LogicaServicioService)
+    public servicioLogica: LogicaServicioService,
   ) {}
 
   @post('/pago')
@@ -45,6 +49,33 @@ export class PagoController {
     pago: Omit<Pago, 'idPago'>,
   ): Promise<Pago> {
     return this.pagoRepository.create(pago);
+  }
+
+  @post('/generar-pago')
+  @response(200, {
+    description: 'Pago model instance',
+    content: {'application/json': {schema: getModelSchemaRef(Pago)}},
+  })
+  async generatePago(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Object)
+        },
+      },
+    })
+    pagoARealizar: any,
+  ): Promise<Pago> {
+    let idRecorrido = pagoARealizar.idRecorrido;
+    let total = await this.servicioLogica.calcularPrecioRecorrido(idRecorrido);
+
+    let pago = {
+      Total: total.precio as number,
+      metodoPagoId: pagoARealizar.metodoPagoId as number,
+    }
+
+    let pagoCreado = await this.pagoRepository.create(pago);
+    return pagoCreado;
   }
 
   @get('/pago/count')

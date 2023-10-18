@@ -3,6 +3,7 @@ import {repository} from '@loopback/repository';
 import Grafo from '../graphModels/grafo';
 import {Barrio, Conductor, Recorrido, RecorridoSolicitud} from '../models';
 import {BarrioRepository, ConductorRepository, RecorridoRepository} from '../repositories';
+import {ConfiguracionLogica} from '../config/logica.config';
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class LogicaServicioService {
@@ -112,5 +113,14 @@ export class LogicaServicioService {
 
     return conductorMasCercano
 
+  }
+
+  async calcularPrecioRecorrido(idRecorrido: number): Promise<any> {
+    let recorrido: Recorrido = await this.repositorioRecorrido.findById(idRecorrido);
+      let precio = recorrido.DistanciaKM * ConfiguracionLogica.precioPorKM;
+      return {
+        precio,
+        recorrido
+      }
   }
 }
