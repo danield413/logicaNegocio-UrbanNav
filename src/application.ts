@@ -1,3 +1,7 @@
+import {
+  AuthenticationComponent,
+  registerAuthenticationStrategy,
+} from '@loopback/authentication';
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
 import {RepositoryMixin} from '@loopback/repository';
@@ -8,6 +12,9 @@ import {
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
+import {clientAuthenticacionStrategy} from './auth/strategy';
+import {adminAuthenticacionStrategy} from './auth/strategyAdmin';
+import {conductorAuthenticacionStrategy} from './auth/strategyConductor';
 import {MySequence} from './sequence';
 
 export {ApplicationConfig};
@@ -64,5 +71,9 @@ export class App extends BootMixin(
         nested: true,
       },
     };
+    registerAuthenticationStrategy(this, clientAuthenticacionStrategy);
+    registerAuthenticationStrategy(this, conductorAuthenticacionStrategy);
+    registerAuthenticationStrategy(this, adminAuthenticacionStrategy);
+    this.component(AuthenticationComponent);
   }
 }

@@ -19,6 +19,7 @@ import {
 } from '@loopback/rest';
 import {Preferencia} from '../models';
 import {PreferenciaRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
 
 export class PreferenciaController {
   constructor(
@@ -26,6 +27,9 @@ export class PreferenciaController {
     public preferenciaRepository : PreferenciaRepository,
   ) {}
 
+  @authenticate({
+    strategy: 'cliente',
+  })
   @post('/preferencia')
   @response(200, {
     description: 'Preferencia model instance',
@@ -47,6 +51,9 @@ export class PreferenciaController {
     return this.preferenciaRepository.create(preferencia);
   }
 
+  @authenticate({
+    strategy: 'cliente',
+  })
   @get('/preferencia/count')
   @response(200, {
     description: 'Preferencia model count',
@@ -58,6 +65,9 @@ export class PreferenciaController {
     return this.preferenciaRepository.count(where);
   }
 
+  @authenticate({
+    strategy: 'cliente',
+  })
   @get('/preferencia')
   @response(200, {
     description: 'Array of Preferencia model instances',
@@ -76,6 +86,9 @@ export class PreferenciaController {
     return this.preferenciaRepository.find(filter);
   }
 
+  @authenticate({
+    strategy: 'cliente',
+  })
   @patch('/preferencia')
   @response(200, {
     description: 'Preferencia PATCH success count',
@@ -95,6 +108,9 @@ export class PreferenciaController {
     return this.preferenciaRepository.updateAll(preferencia, where);
   }
 
+  @authenticate({
+    strategy: 'cliente',
+  })
   @get('/preferencia/{id}')
   @response(200, {
     description: 'Preferencia model instance',
@@ -111,6 +127,9 @@ export class PreferenciaController {
     return this.preferenciaRepository.findById(id, filter);
   }
 
+  @authenticate({
+    strategy: 'cliente',
+  })
   @patch('/preferencia/{id}')
   @response(204, {
     description: 'Preferencia PATCH success',
@@ -129,6 +148,9 @@ export class PreferenciaController {
     await this.preferenciaRepository.updateById(id, preferencia);
   }
 
+  @authenticate({
+    strategy: 'cliente',
+  })
   @put('/preferencia/{id}')
   @response(204, {
     description: 'Preferencia PUT success',
@@ -140,6 +162,9 @@ export class PreferenciaController {
     await this.preferenciaRepository.replaceById(id, preferencia);
   }
 
+  @authenticate({
+    strategy: 'cliente',
+  })
   @del('/preferencia/{id}')
   @response(204, {
     description: 'Preferencia DELETE success',

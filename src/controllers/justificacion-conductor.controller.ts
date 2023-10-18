@@ -19,6 +19,7 @@ import {
 } from '@loopback/rest';
 import {JustificacionConductor} from '../models';
 import {JustificacionConductorRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
 
 export class JustificacionConductorController {
   constructor(
@@ -26,6 +27,9 @@ export class JustificacionConductorController {
     public justificacionConductorRepository : JustificacionConductorRepository,
   ) {}
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @post('/justificacion-conductor')
   @response(200, {
     description: 'JustificacionConductor model instance',
@@ -47,6 +51,9 @@ export class JustificacionConductorController {
     return this.justificacionConductorRepository.create(justificacionConductor);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @get('/justificacion-conductor/count')
   @response(200, {
     description: 'JustificacionConductor model count',
@@ -58,6 +65,9 @@ export class JustificacionConductorController {
     return this.justificacionConductorRepository.count(where);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @get('/justificacion-conductor')
   @response(200, {
     description: 'Array of JustificacionConductor model instances',
@@ -76,6 +86,9 @@ export class JustificacionConductorController {
     return this.justificacionConductorRepository.find(filter);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @patch('/justificacion-conductor')
   @response(200, {
     description: 'JustificacionConductor PATCH success count',
@@ -95,6 +108,9 @@ export class JustificacionConductorController {
     return this.justificacionConductorRepository.updateAll(justificacionConductor, where);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @get('/justificacion-conductor/{id}')
   @response(200, {
     description: 'JustificacionConductor model instance',
@@ -111,6 +127,9 @@ export class JustificacionConductorController {
     return this.justificacionConductorRepository.findById(id, filter);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @patch('/justificacion-conductor/{id}')
   @response(204, {
     description: 'JustificacionConductor PATCH success',
@@ -129,6 +148,9 @@ export class JustificacionConductorController {
     await this.justificacionConductorRepository.updateById(id, justificacionConductor);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @put('/justificacion-conductor/{id}')
   @response(204, {
     description: 'JustificacionConductor PUT success',
@@ -140,6 +162,9 @@ export class JustificacionConductorController {
     await this.justificacionConductorRepository.replaceById(id, justificacionConductor);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @del('/justificacion-conductor/{id}')
   @response(204, {
     description: 'JustificacionConductor DELETE success',

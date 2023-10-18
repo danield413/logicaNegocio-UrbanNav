@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {service} from '@loopback/core';
 import {
   Count,
@@ -21,7 +22,6 @@ import {
 import {Recorrido, RecorridoSolicitud} from '../models';
 import {RecorridoRepository} from '../repositories';
 import {LogicaServicioService} from '../services';
-import {ConfiguracionLogica} from '../config/logica.config';
 
 export class RecorridoController {
   constructor(
@@ -29,8 +29,11 @@ export class RecorridoController {
     public recorridoRepository: RecorridoRepository,
     @service(LogicaServicioService)
     public servicioLogica: LogicaServicioService,
-  ) { }
+  ) {}
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @post('/recorrido')
   @response(200, {
     description: 'Recorrido model instance',
@@ -52,6 +55,9 @@ export class RecorridoController {
     return this.recorridoRepository.create(recorrido);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @get('/recorrido/count')
   @response(200, {
     description: 'Recorrido model count',
@@ -63,6 +69,9 @@ export class RecorridoController {
     return this.recorridoRepository.count(where);
   }
 
+  @authenticate({
+    strategy: 'cliente',
+  })
   @get('/recorrido')
   @response(200, {
     description: 'Array of Recorrido model instances',
@@ -81,6 +90,9 @@ export class RecorridoController {
     return this.recorridoRepository.find(filter);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @patch('/recorrido')
   @response(200, {
     description: 'Recorrido PATCH success count',
@@ -100,6 +112,9 @@ export class RecorridoController {
     return this.recorridoRepository.updateAll(recorrido, where);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @get('/recorrido/{id}')
   @response(200, {
     description: 'Recorrido model instance',
@@ -111,11 +126,15 @@ export class RecorridoController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Recorrido, {exclude: 'where'}) filter?: FilterExcludingWhere<Recorrido>
+    @param.filter(Recorrido, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Recorrido>,
   ): Promise<Recorrido> {
     return this.recorridoRepository.findById(id, filter);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @get('/precio-recorrido/{id}')
   @response(200, {
     description: 'Recorrido model instance',
@@ -127,11 +146,15 @@ export class RecorridoController {
   })
   async buscarPrecioRecorrido(
     @param.path.number('id') id: number,
-    @param.filter(Recorrido, {exclude: 'where'}) filter?: FilterExcludingWhere<Recorrido>
+    @param.filter(Recorrido, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Recorrido>,
   ): Promise<any> {
-     return await this.servicioLogica.calcularPrecioRecorrido(id);
+    return await this.servicioLogica.calcularPrecioRecorrido(id);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @patch('/recorrido/{id}')
   @response(204, {
     description: 'Recorrido PATCH success',
@@ -150,6 +173,9 @@ export class RecorridoController {
     await this.recorridoRepository.updateById(id, recorrido);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @put('/recorrido/{id}')
   @response(204, {
     description: 'Recorrido PUT success',
@@ -161,6 +187,9 @@ export class RecorridoController {
     await this.recorridoRepository.replaceById(id, recorrido);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @del('/recorrido/{id}')
   @response(204, {
     description: 'Recorrido DELETE success',
@@ -169,11 +198,17 @@ export class RecorridoController {
     await this.recorridoRepository.deleteById(id);
   }
 
-  //solicitar viaje
+  //implements strategy
+
+  @authenticate({
+    strategy: 'cliente',
+  })
   @post('/recorrido/solicitar')
   @response(200, {
     description: 'Recorrido model instance',
-    content: {'application/json': {schema: getModelSchemaRef(RecorridoSolicitud)}},
+    content: {
+      'application/json': {schema: getModelSchemaRef(RecorridoSolicitud)},
+    },
   })
   async solicitar(
     @requestBody({
@@ -183,8 +218,10 @@ export class RecorridoController {
         },
       },
     })
-    recorridoSolicitud: RecorridoSolicitud
+    recorridoSolicitud: RecorridoSolicitud,
   ): Promise<any> {
-    return await this.servicioLogica.buscarConductorMasCercano(recorridoSolicitud);
+    return await this.servicioLogica.buscarConductorMasCercano(
+      recorridoSolicitud,
+    );
   }
 }

@@ -19,6 +19,7 @@ import {
 } from '@loopback/rest';
 import {Cliente} from '../models';
 import {ClienteRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
 
 export class ClienteController {
   constructor(

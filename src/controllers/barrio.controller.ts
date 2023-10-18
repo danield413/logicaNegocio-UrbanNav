@@ -19,6 +19,7 @@ import {
 } from '@loopback/rest';
 import {Barrio} from '../models';
 import {BarrioRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
 
 export class BarrioController {
   constructor(
@@ -26,6 +27,9 @@ export class BarrioController {
     public barrioRepository : BarrioRepository,
   ) {}
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @post('/barrio')
   @response(200, {
     description: 'Barrio model instance',
@@ -47,6 +51,9 @@ export class BarrioController {
     return this.barrioRepository.create(barrio);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @get('/barrio/count')
   @response(200, {
     description: 'Barrio model count',
@@ -58,6 +65,9 @@ export class BarrioController {
     return this.barrioRepository.count(where);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @get('/barrio')
   @response(200, {
     description: 'Array of Barrio model instances',
@@ -76,6 +86,9 @@ export class BarrioController {
     return this.barrioRepository.find(filter);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @patch('/barrio')
   @response(200, {
     description: 'Barrio PATCH success count',
@@ -95,6 +108,9 @@ export class BarrioController {
     return this.barrioRepository.updateAll(barrio, where);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @get('/barrio/{id}')
   @response(200, {
     description: 'Barrio model instance',
@@ -111,6 +127,9 @@ export class BarrioController {
     return this.barrioRepository.findById(id, filter);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @patch('/barrio/{id}')
   @response(204, {
     description: 'Barrio PATCH success',
@@ -129,6 +148,9 @@ export class BarrioController {
     await this.barrioRepository.updateById(id, barrio);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @put('/barrio/{id}')
   @response(204, {
     description: 'Barrio PUT success',
@@ -140,6 +162,9 @@ export class BarrioController {
     await this.barrioRepository.replaceById(id, barrio);
   }
 
+  @authenticate({
+    strategy: 'admin',
+  })
   @del('/barrio/{id}')
   @response(204, {
     description: 'Barrio DELETE success',
