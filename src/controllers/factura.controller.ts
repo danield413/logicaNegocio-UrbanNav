@@ -65,7 +65,7 @@ export class FacturaController {
     console.log(viaje, pago)
     console.log(cliente, mongoid)
     axios.post('http://localhost:8080/enviar-correo', {
-      to: mongoid.correo,
+      to: mongoid.usuario.correo,
       name: cliente.primerNombre,
       content: `Hola ${cliente.primerNombre} ${cliente.primerApellido}, tu factura del viaje ${viaje.idViaje} es de ${pago.Total} pesos.`,
       subject: 'Factura de viaje'
