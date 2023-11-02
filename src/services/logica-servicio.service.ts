@@ -1,11 +1,10 @@
 import { /* inject, */ BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {ConfiguracionLogica} from '../config/logica.config';
+import axios from 'axios';
+import {ConfiguracionSeguridad} from '../config/seguridad.config';
 import Grafo from '../graphModels/grafo';
 import {Barrio, Conductor, Recorrido, RecorridoSolicitud} from '../models';
 import {BarrioRepository, ConductorRepository, PuntuacionClienteRepository, PuntuacionConductorRepository, RecorridoRepository} from '../repositories';
-import axios from 'axios';
-import {ConfiguracionSeguridad} from '../config/seguridad.config';
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class LogicaServicioService {
@@ -146,9 +145,10 @@ export class LogicaServicioService {
     return puntuaciones.find((puntuacion) => puntuacion.resenaViajeClienteId == idResena)
   }
 
+  async obtenerInformacionUsuarioEnSeguridad(id: string) {
+    console.log(id)
+    //TODO: HACER UNA LLAMADA A LÓGICA PARA OBTENER LA INFORMACION DE UN USUARIO POR SU IDMONGO
+    const response = await axios.get(`http://localhost:3001/usuario/${id}`)
+    return response.data
+  }
 }
-
-
-
-
-

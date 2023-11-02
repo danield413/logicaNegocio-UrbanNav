@@ -1,3 +1,4 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -7,28 +8,34 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
+import axios from 'axios';
 import {Factura} from '../models';
-import {FacturaRepository, PagoRepository, ViajeRepository} from '../repositories';
+import {ClienteRepository, FacturaRepository, PagoRepository, ViajeRepository} from '../repositories';
+import {LogicaServicioService} from '../services';
 
 export class FacturaController {
   constructor(
     @repository(FacturaRepository)
-    public facturaRepository : FacturaRepository,
+    public facturaRepository: FacturaRepository,
     @repository(ViajeRepository)
-    public viajeRepository : ViajeRepository,
+    public viajeRepository: ViajeRepository,
     @repository(PagoRepository)
-    public pagoRepository : PagoRepository,
-  ) {}
+    public pagoRepository: PagoRepository,
+    @repository(ClienteRepository)
+    public clienteRepository: ClienteRepository,
+    @service(LogicaServicioService)
+    public servicioLogica: LogicaServicioService,
+  ) { }
 
   //TODO: HACER EL METODO PARA GENERAR LA FACTURA
   @post('/generar-factura')
@@ -53,10 +60,18 @@ export class FacturaController {
     //TODO: LLAMAR A NOTIFICACIONES PARA ENVIAR LA FACTURA AL USUARIO
     let viaje = await this.viajeRepository.findById(factura.viajeId);
     let pago = await this.pagoRepository.findById(factura.pagoId);
+    let cliente = await this.clienteRepository.findById(viaje.clienteId);
+    let mongoid = await this.servicioLogica.obtenerInformacionUsuarioEnSeguridad(cliente.idMongoDB!);
     console.log(viaje, pago)
+    console.log(cliente, mongoid)
+    axios.post('http://localhost:8080/enviar-correo', {
+      to: mongoid.correo,
+      name: cliente.primerNombre,
+      content: `Hola ${cliente.primerNombre} ${cliente.primerApellido}, tu factura del viaje ${viaje.idViaje} es de ${pago.Total} pesos.`,
+      subject: 'Factura de viaje'
+    })
     return facturaCreada;
   }
-
 
   @post('/factura')
   @response(200, {
