@@ -4,6 +4,8 @@ import {ConfiguracionLogica} from '../config/logica.config';
 import Grafo from '../graphModels/grafo';
 import {Barrio, Conductor, Recorrido, RecorridoSolicitud} from '../models';
 import {BarrioRepository, ConductorRepository, PuntuacionClienteRepository, PuntuacionConductorRepository, RecorridoRepository} from '../repositories';
+import axios from 'axios';
+import {ConfiguracionSeguridad} from '../config/seguridad.config';
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class LogicaServicioService {
@@ -122,7 +124,12 @@ export class LogicaServicioService {
 
   async calcularPrecioRecorrido(idRecorrido: number): Promise<any> {
     let recorrido: Recorrido = await this.repositorioRecorrido.findById(idRecorrido);
-    let precio = recorrido.DistanciaKM * ConfiguracionLogica.precioPorKM;
+    let precioPorKmSeguridad = await axios.get(`${ConfiguracionSeguridad.urlMicroservicioLogica}/variable/653131f2b1c0fb3c2822a8a6`);
+    console.log(precioPorKmSeguridad)
+    let precioKm = precioPorKmSeguridad.data.valorVariable;
+    //convertir precioKm a number
+    let precioKMNumber = Number(precioKm)
+    let precio = recorrido.DistanciaKM * precioKMNumber;
     return {
       precio,
       recorrido
