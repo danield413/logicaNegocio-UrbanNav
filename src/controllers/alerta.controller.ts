@@ -18,12 +18,23 @@ import {
   response,
 } from '@loopback/rest';
 import {Alerta} from '../models';
-import {AlertaRepository} from '../repositories';
+import {AlertaRepository, ViajeRepository, ClienteRepository, ConductorRepository} from '../repositories';
+import { LogicaServicioService } from '../services';
+import {service} from '@loopback/core';
+import axios from 'axios';
 
 export class AlertaController {
   constructor(
     @repository(AlertaRepository)
     public alertaRepository : AlertaRepository,
+    @repository(ViajeRepository)
+    public viajeRepository : ViajeRepository,
+    @repository(ClienteRepository)
+    public clienteRepository : ClienteRepository,
+    @repository(ConductorRepository)
+    public conductorRepository : ConductorRepository,
+    @service(LogicaServicioService)
+    public servicioLogica : LogicaServicioService
   ) {}
 
   @post('/alerta')
@@ -45,6 +56,40 @@ export class AlertaController {
     alerta: Omit<Alerta, 'idAlerta'>,
   ): Promise<Alerta> {
     return this.alertaRepository.create(alerta);
+  }
+
+  @post('/generar-alerta')
+  @response(200, {
+    description: 'Factura model instance',
+    content: {'application/json': {schema: getModelSchemaRef(Alerta)}},
+  })
+  async generateFactura(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Alerta, {
+            title: 'NewAlerta',
+            exclude: ['idAlerta'],
+          }),
+        },
+      },
+    })
+    alerta: Omit<Alerta, 'idAlerta'>,
+  ): Promise<Alerta> {
+    let AlertaCreada = await this.alertaRepository.create(alerta);
+    //TODO: LLAMAR A NOTIFICACIONES PARA ENVIAR LA ALERTA AL CORREO DE PANICO DEL USUARIO
+    let viaje = await this.viajeRepository.findById(alerta.viajeId);
+    let cliente = await this.clienteRepository.findById(viaje.clienteId);
+    let conductor = await this.conductorRepository.findById(viaje.conductorId);
+    let mongoid = await this.servicioLogica.obtenerInformacionUsuarioEnSeguridad(cliente.idMongoDB!);
+    console.log(mongoid.usuario.correo)
+    axios.post('http://localhost:8080/enviar-correo', {
+      to: cliente.correoPanico,
+      name: cliente.correoPanico,
+      content:`Hola, ${cliente.primerNombre} ${cliente.primerApellido},que va en el viaje ${viaje.idViaje}, se encuentra en peligro, El conductor que lo transporta es: ${conductor.primerNombre}  ${conductor.primerApellido} `,
+      subject: 'Alerta de viaje'
+    })
+    return AlertaCreada;
   }
 
   @get('/alerta/count')
