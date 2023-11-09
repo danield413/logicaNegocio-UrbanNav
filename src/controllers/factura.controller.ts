@@ -63,7 +63,7 @@ export class FacturaController {
     let cliente = await this.clienteRepository.findById(viaje.clienteId);
     let mongoid = await this.servicioLogica.obtenerInformacionUsuarioEnSeguridad(cliente.idMongoDB!);
     console.log(mongoid.usuario.correo)
-    axios.post('http://localhost:8080/enviar-correo', {
+    axios.post('https://notificaciones-urbannav.onrender.com/enviar-correo', {
       to: mongoid.usuario.correo,
       name: cliente.primerNombre,
       content: `Hola ${cliente.primerNombre} ${cliente.primerApellido}, tu factura del viaje ${viaje.idViaje} es de ${pago.Total} pesos.`,

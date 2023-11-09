@@ -1,3 +1,4 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -7,35 +8,34 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
-import {Alerta} from '../models';
-import {AlertaRepository, ViajeRepository, ClienteRepository, ConductorRepository} from '../repositories';
-import { LogicaServicioService } from '../services';
-import {service} from '@loopback/core';
 import axios from 'axios';
+import {Alerta} from '../models';
+import {AlertaRepository, ClienteRepository, ConductorRepository, ViajeRepository} from '../repositories';
+import {LogicaServicioService} from '../services';
 
 export class AlertaController {
   constructor(
     @repository(AlertaRepository)
-    public alertaRepository : AlertaRepository,
+    public alertaRepository: AlertaRepository,
     @repository(ViajeRepository)
-    public viajeRepository : ViajeRepository,
+    public viajeRepository: ViajeRepository,
     @repository(ClienteRepository)
-    public clienteRepository : ClienteRepository,
+    public clienteRepository: ClienteRepository,
     @repository(ConductorRepository)
-    public conductorRepository : ConductorRepository,
+    public conductorRepository: ConductorRepository,
     @service(LogicaServicioService)
-    public servicioLogica : LogicaServicioService
-  ) {}
+    public servicioLogica: LogicaServicioService
+  ) { }
 
   @post('/alerta')
   @response(200, {
@@ -83,10 +83,10 @@ export class AlertaController {
     let conductor = await this.conductorRepository.findById(viaje.conductorId);
     let mongoid = await this.servicioLogica.obtenerInformacionUsuarioEnSeguridad(cliente.idMongoDB!);
     console.log(mongoid.usuario.correo)
-    axios.post('http://localhost:8080/enviar-correo', {
+    axios.post('https://notificaciones-urbannav.onrender.com/enviar-correo', {
       to: cliente.correoPanico,
       name: cliente.correoPanico,
-      content:`Hola, ${cliente.primerNombre} ${cliente.primerApellido},que va en el viaje ${viaje.idViaje}, se encuentra en peligro, El conductor que lo transporta es: ${conductor.primerNombre}  ${conductor.primerApellido} `,
+      content: `Hola, ${cliente.primerNombre} ${cliente.primerApellido},que va en el viaje ${viaje.idViaje}, se encuentra en peligro, El conductor que lo transporta es: ${conductor.primerNombre}  ${conductor.primerApellido} `,
       subject: 'Alerta de viaje'
     })
     return AlertaCreada;
