@@ -69,9 +69,6 @@ export class RecorridoController {
     return this.recorridoRepository.count(where);
   }
 
-  @authenticate({
-    strategy: 'cliente',
-  })
   @get('/recorrido')
   @response(200, {
     description: 'Array of Recorrido model instances',
@@ -86,8 +83,10 @@ export class RecorridoController {
   })
   async find(
     @param.filter(Recorrido) filter?: Filter<Recorrido>,
-  ): Promise<Recorrido[]> {
-    return this.recorridoRepository.find(filter);
+  ): Promise<any[]> {
+    console.log('recorridos GET');
+    let recorridos = await this.servicioLogica.obtenerRecorridosBarrios();
+    return recorridos;
   }
 
   @authenticate({
@@ -132,9 +131,6 @@ export class RecorridoController {
     return this.recorridoRepository.findById(id, filter);
   }
 
-  @authenticate({
-    strategy: 'admin',
-  })
   @get('/precio-recorrido/{id}')
   @response(200, {
     description: 'Recorrido model instance',
