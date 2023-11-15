@@ -17,14 +17,21 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Barrio} from '../models';
+import {Barrio, Ciudad} from '../models';
 import {BarrioRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
+import { LogicaServicioService } from '../services/logica-servicio.service';
+import {service} from '@loopback/core';
+import { CiudadRepository } from '../repositories/ciudad.repository';
 
 export class BarrioController {
   constructor(
     @repository(BarrioRepository)
     public barrioRepository : BarrioRepository,
+    @service(LogicaServicioService)
+    public LogicaServicioService: LogicaServicioService,
+    @repository(CiudadRepository)
+    public CiudadRepository: CiudadRepository,
   ) {}
 
   @authenticate({
@@ -65,9 +72,9 @@ export class BarrioController {
     return this.barrioRepository.count(where);
   }
 
-  @authenticate({
-    strategy: 'admin',
-  })
+  ///@authenticate({
+    ///strategy: 'admin',
+  ///})
   @get('/barrio')
   @response(200, {
     description: 'Array of Barrio model instances',
@@ -83,7 +90,8 @@ export class BarrioController {
   async find(
     @param.filter(Barrio) filter?: Filter<Barrio>,
   ): Promise<Barrio[]> {
-    return this.barrioRepository.find(filter);
+      let barriosCiudades = await this.LogicaServicioService.obtenerBarriosCiudades();
+      return barriosCiudades
   }
 
   @authenticate({
@@ -126,6 +134,7 @@ export class BarrioController {
   ): Promise<Barrio> {
     return this.barrioRepository.findById(id, filter);
   }
+
 
   @authenticate({
     strategy: 'admin',

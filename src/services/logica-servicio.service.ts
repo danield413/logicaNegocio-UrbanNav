@@ -4,7 +4,7 @@ import axios from 'axios';
 import {ConfiguracionSeguridad} from '../config/seguridad.config';
 import Grafo from '../graphModels/grafo';
 import {Barrio, Conductor, Recorrido, RecorridoSolicitud} from '../models';
-import {BarrioRepository, ConductorRepository, PuntuacionClienteRepository, PuntuacionConductorRepository, RecorridoRepository} from '../repositories';
+import {BarrioRepository, CiudadRepository, ConductorRepository, PuntuacionClienteRepository, PuntuacionConductorRepository, RecorridoRepository} from '../repositories';
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class LogicaServicioService {
@@ -19,6 +19,8 @@ export class LogicaServicioService {
     public repositorioPuntuacionConductor: PuntuacionConductorRepository,
     @repository(PuntuacionClienteRepository)
     public repositorioPuntuacionCliente: PuntuacionClienteRepository,
+    @repository(CiudadRepository)
+    public repositorioCiudad: CiudadRepository,
 
   ) { }
 
@@ -151,4 +153,30 @@ export class LogicaServicioService {
     const response = await axios.get(`http://localhost:3001/usuario/${id}`)
     return response.data
   }
+
+    //metodo que me retorne: una lista con todos los barrios y la ciudad a la que pertenece cada Barrio
+    async obtenerBarriosCiudades(): Promise<any> {
+      let barrios = await this.repositorioBarrio.find();
+      const barriosCiudades = [];
+
+      for (const barrio of barrios) {
+        let ciudadId = barrio.ciudadId;
+
+        try {
+          let ciudad = await this.repositorioCiudad.findById(ciudadId);
+
+          barriosCiudades.push({
+            barrio: barrio.nombreBarrio,
+            barrioId : barrio.idBarrio,
+            ciudad: ciudad.Nombre,
+            ciudadId: ciudad.idCiudad
+          });
+        } catch (error) {
+          // Manejar el error, por ejemplo, registrándolo o tomando alguna acción específica
+          console.error(`Error al procesar el barrio ${barrio.nombreBarrio}: ${error.message}`);
+        }
+      }
+
+      return barriosCiudades;
+    }
 }
