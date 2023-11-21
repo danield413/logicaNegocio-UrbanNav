@@ -1,4 +1,4 @@
-import {/* inject, */ BindingScope, injectable} from '@loopback/core';
+import { /* inject, */ BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import axios from 'axios';
 import {ConfiguracionSeguridad} from '../config/seguridad.config';
@@ -28,7 +28,7 @@ export class LogicaServicioService {
     public repositorioPuntuacionCliente: PuntuacionClienteRepository,
     @repository(CiudadRepository)
     public repositorioCiudad: CiudadRepository,
-  ) {}
+  ) { }
 
   /*
    * Add service methods here
@@ -39,6 +39,7 @@ export class LogicaServicioService {
 
   async buscarConductorMasCercano(
     recorrido: RecorridoSolicitud,
+    idConductor: string = ''
   ): Promise<Conductor> {
     // tomar el recorrido que quiere recorrer dicho usuario
 
@@ -123,8 +124,10 @@ export class LogicaServicioService {
     let conductoresElegidos: Conductor[] = [];
     distanciasOrdenadas.forEach(distancia => {
       conductoresDisponibles.forEach((conductor: Conductor) => {
-        if (conductor.barrioId == distancia.nodo) {
-          conductoresElegidos.push(conductor);
+        if (idConductor != '' || conductor.idMongoDB != idConductor) {
+          if (conductor.barrioId == distancia.nodo) {
+            conductoresElegidos.push(conductor);
+          }
         }
       });
     });
