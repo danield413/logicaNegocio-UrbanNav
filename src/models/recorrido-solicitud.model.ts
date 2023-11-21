@@ -14,6 +14,12 @@ export class RecorridoSolicitud extends Model {
   })
   barrioDestinoId: number;
 
+  @property({
+    type: 'string',
+    required: true,
+  })
+  conductorId: string;
+
 
   constructor(data?: Partial<RecorridoSolicitud>) {
     super(data);

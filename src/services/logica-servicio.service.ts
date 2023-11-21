@@ -38,9 +38,8 @@ export class LogicaServicioService {
   //TODO: un conductor está disponible si el atributo es "LIBRE"
 
   async buscarConductorMasCercano(
-    recorrido: RecorridoSolicitud,
-    idConductor: string = ''
-  ): Promise<Conductor> {
+    recorrido: RecorridoSolicitud
+  ): Promise<Conductor | null> {
     // tomar el recorrido que quiere recorrer dicho usuario
 
     // el usuario esta en el origen
@@ -124,7 +123,7 @@ export class LogicaServicioService {
     let conductoresElegidos: Conductor[] = [];
     distanciasOrdenadas.forEach(distancia => {
       conductoresDisponibles.forEach((conductor: Conductor) => {
-        if (conductor.idMongoDB != idConductor) {
+        if (conductor.idMongoDB != recorrido.conductorId) {
           if (conductor.barrioId == distancia.nodo) {
             conductoresElegidos.push(conductor);
           }
@@ -134,15 +133,24 @@ export class LogicaServicioService {
 
     console.log('---------------------');
     // dejar solo el conductor en la posicion 0
-    let conductorMasCercano = conductoresElegidos[0];
-    console.log(
-      'El conductor mas cercano es:',
-      conductorMasCercano.primerNombre,
-      'que esta en el barrio',
-      conductorMasCercano.barrioId,
-    );
 
-    return conductorMasCercano;
+    console.log("cantidad de conductores elegidos", conductoresElegidos.length)
+
+    if (conductoresElegidos.length > 1) {
+      let conductorMasCercano = conductoresElegidos[0];
+      console.log(
+        'El conductor mas cercano es:',
+        conductorMasCercano.primerNombre,
+        'que esta en el barrio',
+        conductorMasCercano.barrioId,
+      );
+
+      return conductorMasCercano;
+
+    } else {
+      return null;
+    }
+
   }
 
   async obtenerInformacionBarrio(barrioId: number): Promise<any> {
