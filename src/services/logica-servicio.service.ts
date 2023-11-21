@@ -124,7 +124,7 @@ export class LogicaServicioService {
     let conductoresElegidos: Conductor[] = [];
     distanciasOrdenadas.forEach(distancia => {
       conductoresDisponibles.forEach((conductor: Conductor) => {
-        if (idConductor != '' || conductor.idMongoDB != idConductor) {
+        if (conductor.idMongoDB != idConductor) {
           if (conductor.barrioId == distancia.nodo) {
             conductoresElegidos.push(conductor);
           }

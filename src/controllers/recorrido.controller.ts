@@ -29,7 +29,7 @@ export class RecorridoController {
     public recorridoRepository: RecorridoRepository,
     @service(LogicaServicioService)
     public servicioLogica: LogicaServicioService,
-  ) {}
+  ) { }
 
   @authenticate({
     strategy: 'admin',
@@ -111,9 +111,9 @@ export class RecorridoController {
     return this.recorridoRepository.updateAll(recorrido, where);
   }
 
-  @authenticate({
-    strategy: 'admin',
-  })
+  // @authenticate({
+  //   strategy: 'admin',
+  // })
   @get('/recorrido/{id}')
   @response(200, {
     description: 'Recorrido model instance',
@@ -169,9 +169,9 @@ export class RecorridoController {
     await this.recorridoRepository.updateById(id, recorrido);
   }
 
-  @authenticate({
-    strategy: 'admin',
-  })
+  // @authenticate({
+  //   strategy: 'admin',
+  // })
   @put('/recorrido/{id}')
   @response(204, {
     description: 'Recorrido PUT success',
@@ -196,9 +196,9 @@ export class RecorridoController {
 
   //implements strategy
 
-  @authenticate({
-    strategy: 'cliente',
-  })
+  // @authenticate({
+  //   strategy: 'cliente',
+  // })
   @post('/recorrido/solicitar')
   @response(200, {
     description: 'Recorrido model instance',
