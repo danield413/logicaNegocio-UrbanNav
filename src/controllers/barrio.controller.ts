@@ -32,7 +32,7 @@ export class BarrioController {
     public LogicaServicioService: LogicaServicioService,
     @repository(CiudadRepository)
     public CiudadRepository: CiudadRepository,
-  ) { }
+  ) {}
 
   @authenticate({
     strategy: 'admin',
@@ -66,15 +66,10 @@ export class BarrioController {
     description: 'Barrio model count',
     content: {'application/json': {schema: CountSchema}},
   })
-  async count(
-    @param.where(Barrio) where?: Where<Barrio>,
-  ): Promise<Count> {
+  async count(@param.where(Barrio) where?: Where<Barrio>): Promise<Count> {
     return this.barrioRepository.count(where);
   }
 
-  @authenticate({
-    strategy: 'admin',
-  })
   @get('/barrio')
   @response(200, {
     description: 'Array of Barrio model instances',
@@ -87,11 +82,10 @@ export class BarrioController {
       },
     },
   })
-  async find(
-    @param.filter(Barrio) filter?: Filter<Barrio>,
-  ): Promise<Barrio[]> {
-    let barriosCiudades = await this.LogicaServicioService.obtenerBarriosCiudades();
-    return barriosCiudades
+  async find(@param.filter(Barrio) filter?: Filter<Barrio>): Promise<Barrio[]> {
+    let barriosCiudades =
+      await this.LogicaServicioService.obtenerBarriosCiudades();
+    return barriosCiudades;
   }
 
   @authenticate({
@@ -116,9 +110,9 @@ export class BarrioController {
     return this.barrioRepository.updateAll(barrio, where);
   }
 
-  @authenticate({
-    strategy: 'admin',
-  })
+  // @authenticate({
+  //   strategy: 'admin',
+  // })
   @get('/barrio/{id}')
   @response(200, {
     description: 'Barrio model instance',
@@ -130,11 +124,11 @@ export class BarrioController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Barrio, {exclude: 'where'}) filter?: FilterExcludingWhere<Barrio>
+    @param.filter(Barrio, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Barrio>,
   ): Promise<Barrio> {
     return this.barrioRepository.findById(id, filter);
   }
-
 
   @authenticate({
     strategy: 'admin',

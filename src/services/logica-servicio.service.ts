@@ -1,4 +1,4 @@
-import { /* inject, */ BindingScope, injectable} from '@loopback/core';
+import {/* inject, */ BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import axios from 'axios';
 import {ConfiguracionSeguridad} from '../config/seguridad.config';
@@ -28,7 +28,7 @@ export class LogicaServicioService {
     public repositorioPuntuacionCliente: PuntuacionClienteRepository,
     @repository(CiudadRepository)
     public repositorioCiudad: CiudadRepository,
-  ) { }
+  ) {}
 
   /*
    * Add service methods here
@@ -38,7 +38,7 @@ export class LogicaServicioService {
   //TODO: un conductor está disponible si el atributo es "LIBRE"
 
   async buscarConductorMasCercano(
-    recorrido: RecorridoSolicitud
+    recorrido: RecorridoSolicitud,
   ): Promise<Conductor | null> {
     // tomar el recorrido que quiere recorrer dicho usuario
 
@@ -123,7 +123,10 @@ export class LogicaServicioService {
     let conductoresElegidos: Conductor[] = [];
     distanciasOrdenadas.forEach(distancia => {
       conductoresDisponibles.forEach((conductor: Conductor) => {
-        if (conductor.idMongoDB != recorrido.conductorId) {
+        if (
+          conductor.idMongoDB != recorrido.conductorId &&
+          conductor.estadoServicio == 'LIBRE'
+        ) {
           if (conductor.barrioId == distancia.nodo) {
             conductoresElegidos.push(conductor);
           }
@@ -134,7 +137,7 @@ export class LogicaServicioService {
     console.log('---------------------');
     // dejar solo el conductor en la posicion 0
 
-    console.log("cantidad de conductores elegidos", conductoresElegidos.length)
+    console.log('cantidad de conductores elegidos', conductoresElegidos.length);
 
     if (conductoresElegidos.length > 1) {
       let conductorMasCercano = conductoresElegidos[0];
@@ -146,11 +149,9 @@ export class LogicaServicioService {
       );
 
       return conductorMasCercano;
-
     } else {
       return null;
     }
-
   }
 
   async obtenerInformacionBarrio(barrioId: number): Promise<any> {

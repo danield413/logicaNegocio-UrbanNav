@@ -7,13 +7,13 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
@@ -23,7 +23,7 @@ import {ConductorRepository} from '../repositories';
 export class ConductorController {
   constructor(
     @repository(ConductorRepository)
-    public conductorRepository : ConductorRepository,
+    public conductorRepository: ConductorRepository,
   ) {}
 
   @post('/conductor')
@@ -106,7 +106,8 @@ export class ConductorController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Conductor, {exclude: 'where'}) filter?: FilterExcludingWhere<Conductor>
+    @param.filter(Conductor, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Conductor>,
   ): Promise<Conductor> {
     return this.conductorRepository.findById(id, filter);
   }
@@ -147,6 +148,7 @@ export class ConductorController {
     const conductor = await this.conductorRepository.findOne({
       where: {idMongoDB: id},
     });
+    console.log(conductor);
     if (conductor) return conductor;
   }
 
