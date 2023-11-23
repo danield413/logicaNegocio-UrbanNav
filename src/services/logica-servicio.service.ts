@@ -154,6 +154,106 @@ export class LogicaServicioService {
     }
   }
 
+  async buscarCondcutoresCercanos(
+    recorrido: RecorridoSolicitud,
+  ): Promise<Conductor[] | null> {
+    // tomar el recorrido que quiere recorrer dicho usuario
+
+    // el usuario esta en el origen
+    let origen = recorrido.barrioOrigenId; //<-- ya sabemos que el usuario está ahí en el origen
+    let destino = recorrido.barrioDestinoId;
+
+    console.log(origen);
+    console.log(destino);
+
+    //buscar que conductores estan disponibles y ya sabemos en que posicion estan
+    let conductoresDisponibles = await this.repositorioConductor.find({
+      where: {estadoServicio: 'LIBRE'},
+    });
+    // console.log(conductoresDisponibles)
+
+    let barrios = await this.repositorioBarrio.find();
+    // console.log(barrios)
+
+    let grafo = new Grafo<number>();
+
+    barrios.forEach((barrio: Barrio) => {
+      grafo.agregarNodo(barrio.idBarrio!);
+    });
+    console.log(grafo.obtenerNodos());
+
+    let recorridos = await this.repositorioRecorrido.find();
+    recorridos.map((recorrido: Recorrido) => {
+      grafo.agregarArista(
+        recorrido.barrioOrigenId,
+        recorrido.barrioDestinoId,
+        recorrido.DistanciaKM,
+      );
+    });
+    console.log(grafo.obtenerAristas());
+
+    //ejecutar dijkstra
+    let distanciaMasCorta = grafo.dijkstra(origen);
+    //quitar las distancias que tienen como peso INFINITY
+    distanciaMasCorta.forEach((distancia, nodo) => {
+      if (distancia == Infinity) {
+        distanciaMasCorta.delete(nodo);
+      }
+    });
+    console.log('---------------------');
+    console.log('Distancias más cortas desde el nodo', origen);
+    distanciaMasCorta.forEach((distancia, nodo) => {
+      console.log(`Nodo ${nodo}: Distancia = ${distancia}`);
+    });
+
+    //ordenar distanciMasCorta de menor a mayor distanciKm usando un ciclo
+    let distanciasOrdenadas: any[] = [];
+    distanciaMasCorta.forEach((distancia, nodo) => {
+      distanciasOrdenadas.push({
+        nodo: nodo,
+        distancia: distancia,
+      });
+    });
+
+    distanciasOrdenadas.sort((a, b) => {
+      return a.distancia - b.distancia;
+    });
+
+    console.log('---------------------');
+    console.log('Distancias ordenadas de menor a mayor');
+    distanciasOrdenadas.forEach(distancia => {
+      console.log(`Nodo ${distancia.nodo}: Distancia = ${distancia.distancia}`);
+    });
+
+    console.log('---------------------');
+
+    conductoresDisponibles.forEach((conductor: Conductor) => {
+      console.log(
+        'DISPONIBLE: Conductor',
+        conductor.primerNombre,
+        'esta en el barrio',
+        conductor.barrioId,
+      );
+    });
+
+    //recorrer las distancias ordenadas y por cada una buscar que conductores están ahí
+    let conductoresElegidos: Conductor[] = [];
+    distanciasOrdenadas.forEach(distancia => {
+      conductoresDisponibles.forEach((conductor: Conductor) => {
+        if (
+          conductor.idMongoDB != recorrido.conductorId &&
+          conductor.estadoServicio == 'LIBRE'
+        ) {
+          if (conductor.barrioId == distancia.nodo) {
+            conductoresElegidos.push(conductor);
+          }
+        }
+      });
+    });
+
+    return conductoresElegidos;
+  }
+
   async obtenerInformacionBarrio(barrioId: number): Promise<any> {
     let barrio = await this.repositorioBarrio.findById(barrioId);
     let ciudad = await this.repositorioCiudad.findById(barrio.ciudadId);

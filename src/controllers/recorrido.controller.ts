@@ -29,7 +29,7 @@ export class RecorridoController {
     public recorridoRepository: RecorridoRepository,
     @service(LogicaServicioService)
     public servicioLogica: LogicaServicioService,
-  ) { }
+  ) {}
 
   @authenticate({
     strategy: 'admin',
@@ -217,6 +217,28 @@ export class RecorridoController {
     recorridoSolicitud: RecorridoSolicitud,
   ): Promise<any> {
     return await this.servicioLogica.buscarConductorMasCercano(
+      recorridoSolicitud,
+    );
+  }
+
+  @post('/recorrido/solicitar/conductores-cercanos')
+  @response(200, {
+    description: 'Recorrido model instance',
+    content: {
+      'application/json': {schema: getModelSchemaRef(RecorridoSolicitud)},
+    },
+  })
+  async solocitarConductoresCercanos(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(RecorridoSolicitud),
+        },
+      },
+    })
+    recorridoSolicitud: RecorridoSolicitud,
+  ): Promise<any> {
+    return await this.servicioLogica.buscarCondcutoresCercanos(
       recorridoSolicitud,
     );
   }
