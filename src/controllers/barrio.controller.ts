@@ -83,9 +83,10 @@ export class BarrioController {
     },
   })
   async find(@param.filter(Barrio) filter?: Filter<Barrio>): Promise<Barrio[]> {
-    let barriosCiudades =
-      await this.LogicaServicioService.obtenerBarriosCiudades();
-    return barriosCiudades;
+    // let barriosCiudades =
+    return this.barrioRepository.find(filter);
+    // await this.LogicaServicioService.obtenerBarriosCiudades();
+    // return barriosCiudades;
   }
 
   @authenticate({

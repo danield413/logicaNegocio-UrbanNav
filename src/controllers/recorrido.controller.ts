@@ -85,8 +85,8 @@ export class RecorridoController {
     @param.filter(Recorrido) filter?: Filter<Recorrido>,
   ): Promise<any[]> {
     console.log('recorridos GET');
-    let recorridos = await this.servicioLogica.obtenerRecorridosBarrios();
-    return recorridos;
+    // let recorridos = await this.servicioLogica.obtenerRecorridosBarrios();
+    return this.recorridoRepository.find(filter);
   }
 
   @authenticate({
