@@ -1,3 +1,4 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -18,13 +19,22 @@ import {
   response,
 } from '@loopback/rest';
 import {Conductor} from '../models';
-import {ConductorRepository} from '../repositories';
+import {ConductorRepository, PuntuacionConductorRepository, ResenaViajeConductorRepository, ViajeRepository} from '../repositories';
+import {LogicaServicioService} from '../services';
 
 export class ConductorController {
   constructor(
     @repository(ConductorRepository)
     public conductorRepository: ConductorRepository,
-  ) {}
+    @repository(PuntuacionConductorRepository)
+    public puntuacionConductorRepository: PuntuacionConductorRepository,
+    @repository(ViajeRepository)
+    public conductorViajeRepository: ViajeRepository,
+    @repository(ResenaViajeConductorRepository)
+    public resenaViajeConductorRepository: ResenaViajeConductorRepository,
+    @service(LogicaServicioService)
+    public logicaServicioService: LogicaServicioService,
+  ) { }
 
   @post('/conductor')
   @response(200, {
@@ -110,6 +120,25 @@ export class ConductorController {
     filter?: FilterExcludingWhere<Conductor>,
   ): Promise<Conductor> {
     return this.conductorRepository.findById(id, filter);
+  }
+
+
+  @get('/promedio-conductor/{id}')
+  @response(200, {
+    description: 'Conductor model instance',
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(Conductor, {includeRelations: true}),
+      },
+    },
+  })
+  async findPromedioById(
+    @param.path.number('id') id: number,
+    @param.filter(Conductor, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Conductor>,
+  ): Promise<any> {
+    let promedio = await this.logicaServicioService.promedioConductor(id);
+    return promedio;
   }
 
   @patch('/conductor/{id}')

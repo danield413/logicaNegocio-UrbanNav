@@ -7,13 +7,13 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
@@ -23,8 +23,8 @@ import {PuntuacionConductorRepository} from '../repositories';
 export class PuntuacionConductorController {
   constructor(
     @repository(PuntuacionConductorRepository)
-    public puntuacionConductorRepository : PuntuacionConductorRepository,
-  ) {}
+    public puntuacionConductorRepository: PuntuacionConductorRepository,
+  ) { }
 
   @post('/puntuacion-conductor')
   @response(200, {

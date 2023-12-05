@@ -1,4 +1,4 @@
-import {/* inject, */ BindingScope, injectable} from '@loopback/core';
+import { /* inject, */ BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import axios from 'axios';
 import {ConfiguracionSeguridad} from '../config/seguridad.config';
@@ -11,6 +11,8 @@ import {
   PuntuacionClienteRepository,
   PuntuacionConductorRepository,
   RecorridoRepository,
+  ResenaViajeConductorRepository,
+  ViajeRepository,
 } from '../repositories';
 
 @injectable({scope: BindingScope.TRANSIENT})
@@ -28,7 +30,15 @@ export class LogicaServicioService {
     public repositorioPuntuacionCliente: PuntuacionClienteRepository,
     @repository(CiudadRepository)
     public repositorioCiudad: CiudadRepository,
-  ) {}
+    @repository(ConductorRepository)
+    public conductorRepository: ConductorRepository,
+    @repository(PuntuacionConductorRepository)
+    public puntuacionConductorRepository: PuntuacionConductorRepository,
+    @repository(ViajeRepository)
+    public conductorViajeRepository: ViajeRepository,
+    @repository(ResenaViajeConductorRepository)
+    public resenaViajeConductorRepository: ResenaViajeConductorRepository,
+  ) { }
 
   /*
    * Add service methods here
@@ -358,5 +368,50 @@ export class LogicaServicioService {
     }
 
     return recorridosBarrios;
+  }
+
+  async promedioConductor(id: number): Promise<any> {
+    let viajes = await this.conductorViajeRepository.find
+      ({
+        where: {conductorId: id},
+        include: [{
+          relation: 'resenaViajeConductor',
+          scope: {
+            fields: ['puntuacion'],
+          }
+        }],
+      });
+
+    let viajesId = viajes.map(viaje => viaje.idViaje);
+
+
+    let resenas = [];
+    for (const viajeId of viajesId) {
+      const resena = await this.resenaViajeConductorRepository.findOne({
+        where: {viajeId}
+      });
+      if (resena) {
+        resenas.push(resena);
+      }
+    }
+
+    let puntuciones = []
+    for (const resena of resenas) {
+      const puntuacion = await this.puntuacionConductorRepository.findOne({
+        where: {resenaViajeConductorId: resena.idResena}
+      });
+      if (puntuacion) {
+        puntuciones.push(puntuacion.puntuacion !== undefined ? puntuacion.puntuacion : 0);
+      }
+    }
+
+    let promedio = 0;
+    for (const puntuacion of puntuciones) {
+      promedio += puntuacion;
+    }
+    promedio = promedio / puntuciones.length;
+
+    return promedio;
+
   }
 }
