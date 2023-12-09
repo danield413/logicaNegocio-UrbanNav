@@ -1,4 +1,4 @@
-import { /* inject, */ BindingScope, injectable} from '@loopback/core';
+import {/* inject, */ BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import axios from 'axios';
 import {ConfiguracionSeguridad} from '../config/seguridad.config';
@@ -38,7 +38,7 @@ export class LogicaServicioService {
     public conductorViajeRepository: ViajeRepository,
     @repository(ResenaViajeConductorRepository)
     public resenaViajeConductorRepository: ResenaViajeConductorRepository,
-  ) { }
+  ) {}
 
   /*
    * Add service methods here
@@ -371,47 +371,50 @@ export class LogicaServicioService {
   }
 
   async promedioConductor(id: number): Promise<any> {
-    let viajes = await this.conductorViajeRepository.find
-      ({
-        where: {conductorId: id},
-        include: [{
+    let viajes = await this.conductorViajeRepository.find({
+      where: {conductorId: id},
+      include: [
+        {
           relation: 'resenaViajeConductor',
           scope: {
             fields: ['puntuacion'],
-          }
-        }],
-      });
+          },
+        },
+      ],
+    });
 
     let viajesId = viajes.map(viaje => viaje.idViaje);
-
 
     let resenas = [];
     for (const viajeId of viajesId) {
       const resena = await this.resenaViajeConductorRepository.findOne({
-        where: {viajeId}
+        where: {viajeId},
       });
       if (resena) {
         resenas.push(resena);
       }
     }
 
-    let puntuciones = []
+    let puntuciones = [];
     for (const resena of resenas) {
       const puntuacion = await this.puntuacionConductorRepository.findOne({
-        where: {resenaViajeConductorId: resena.idResena}
+        where: {resenaViajeConductorId: resena.idResena},
       });
       if (puntuacion) {
-        puntuciones.push(puntuacion.puntuacion !== undefined ? puntuacion.puntuacion : 0);
+        puntuciones.push(
+          puntuacion.puntuacion !== undefined ? puntuacion.puntuacion : 0,
+        );
       }
     }
 
     let promedio = 0;
     for (const puntuacion of puntuciones) {
+      console.log(puntuacion);
       promedio += puntuacion;
     }
+    console.log(puntuciones, puntuciones.length);
     promedio = promedio / puntuciones.length;
 
     return promedio;
-
   }
 }
