@@ -30,12 +30,14 @@ export class ResenaViajeConductorController {
     public viajeRepository: ViajeRepository,
     @service(LogicaServicioService)
     public LogicaServicio: LogicaServicioService,
-  ) { }
+  ) {}
 
   @post('/resena-viaje-conductor')
   @response(200, {
     description: 'ResenaViajeConductor model instance',
-    content: {'application/json': {schema: getModelSchemaRef(ResenaViajeConductor)}},
+    content: {
+      'application/json': {schema: getModelSchemaRef(ResenaViajeConductor)},
+    },
   })
   async create(
     @requestBody({
@@ -71,7 +73,9 @@ export class ResenaViajeConductorController {
       'application/json': {
         schema: {
           type: 'array',
-          items: getModelSchemaRef(ResenaViajeConductor, {includeRelations: true}),
+          items: getModelSchemaRef(ResenaViajeConductor, {
+            includeRelations: true,
+          }),
         },
       },
     },
@@ -79,7 +83,23 @@ export class ResenaViajeConductorController {
   async find(
     @param.filter(ResenaViajeConductor) filter?: Filter<ResenaViajeConductor>,
   ): Promise<ResenaViajeConductor[]> {
-    return this.resenaViajeConductorRepository.find(filter);
+    return this.resenaViajeConductorRepository.find({
+      include: [
+        {
+          relation: 'viaje',
+          scope: {
+            include: [
+              {
+                relation: 'conductor', // Asumiendo que hay una relación llamada 'conductor' en tu modelo 'Viaje'
+              },
+            ],
+          },
+        },
+        {
+          relation: 'puntuacionConductor',
+        },
+      ],
+    });
   }
 
   @patch('/resena-viaje-conductor')
@@ -98,7 +118,10 @@ export class ResenaViajeConductorController {
     resenaViajeConductor: ResenaViajeConductor,
     @param.where(ResenaViajeConductor) where?: Where<ResenaViajeConductor>,
   ): Promise<Count> {
-    return this.resenaViajeConductorRepository.updateAll(resenaViajeConductor, where);
+    return this.resenaViajeConductorRepository.updateAll(
+      resenaViajeConductor,
+      where,
+    );
   }
 
   @get('/resena-viaje-conductor/{id}')
@@ -106,13 +129,16 @@ export class ResenaViajeConductorController {
     description: 'ResenaViajeConductor model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(ResenaViajeConductor, {includeRelations: true}),
+        schema: getModelSchemaRef(ResenaViajeConductor, {
+          includeRelations: true,
+        }),
       },
     },
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(ResenaViajeConductor, {exclude: 'where'}) filter?: FilterExcludingWhere<ResenaViajeConductor>
+    @param.filter(ResenaViajeConductor, {exclude: 'where'})
+    filter?: FilterExcludingWhere<ResenaViajeConductor>,
   ): Promise<ResenaViajeConductor> {
     return this.resenaViajeConductorRepository.findById(id, filter);
   }
@@ -124,7 +150,9 @@ export class ResenaViajeConductorController {
       'application/json': {
         schema: {
           type: 'array',
-          items: getModelSchemaRef(ResenaViajeConductor, {includeRelations: true}),
+          items: getModelSchemaRef(ResenaViajeConductor, {
+            includeRelations: true,
+          }),
         },
       },
     },
@@ -137,13 +165,15 @@ export class ResenaViajeConductorController {
     let resenasConductor = resenas.map(async (resena: ResenaViajeConductor) => {
       let viaje = await this.viajeRepository.findById(resena.viajeId);
       if (viaje.conductorId === id) {
-        let puntuacion = await this.LogicaServicio.puntuacionResenasConductor(resena.idResena!);
+        let puntuacion = await this.LogicaServicio.puntuacionResenasConductor(
+          resena.idResena!,
+        );
         return {
           resena,
-          puntuacion
-        }
+          puntuacion,
+        };
       }
-    })
+    });
     return Promise.all(resenasConductor);
   }
 
@@ -162,7 +192,10 @@ export class ResenaViajeConductorController {
     })
     resenaViajeConductor: ResenaViajeConductor,
   ): Promise<void> {
-    await this.resenaViajeConductorRepository.updateById(id, resenaViajeConductor);
+    await this.resenaViajeConductorRepository.updateById(
+      id,
+      resenaViajeConductor,
+    );
   }
 
   @put('/resena-viaje-conductor/{id}')
@@ -173,7 +206,10 @@ export class ResenaViajeConductorController {
     @param.path.number('id') id: number,
     @requestBody() resenaViajeConductor: ResenaViajeConductor,
   ): Promise<void> {
-    await this.resenaViajeConductorRepository.replaceById(id, resenaViajeConductor);
+    await this.resenaViajeConductorRepository.replaceById(
+      id,
+      resenaViajeConductor,
+    );
   }
 
   @del('/resena-viaje-conductor/{id}')
