@@ -1,3 +1,4 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
@@ -7,29 +8,25 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
 } from '@loopback/rest';
 import {Preferencia} from '../models';
 import {PreferenciaRepository} from '../repositories';
-import {authenticate} from '@loopback/authentication';
 
 export class PreferenciaController {
   constructor(
     @repository(PreferenciaRepository)
-    public preferenciaRepository : PreferenciaRepository,
+    public preferenciaRepository: PreferenciaRepository,
   ) {}
 
-  @authenticate({
-    strategy: 'cliente',
-  })
   @post('/preferencia')
   @response(200, {
     description: 'Preferencia model instance',
@@ -122,7 +119,8 @@ export class PreferenciaController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Preferencia, {exclude: 'where'}) filter?: FilterExcludingWhere<Preferencia>
+    @param.filter(Preferencia, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Preferencia>,
   ): Promise<Preferencia> {
     return this.preferenciaRepository.findById(id, filter);
   }
